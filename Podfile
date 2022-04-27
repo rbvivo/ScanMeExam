@@ -6,6 +6,6 @@ target 'ScanMeExam' do
   use_frameworks!
 
   # Pods for ScanMeExam
-  pod 'TesseractOCRiOS'
+  # pod 'TesseractOCRiOS'
   
 end

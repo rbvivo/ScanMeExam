@@ -105,7 +105,6 @@
 				1D00A97D2818EB4200CC96B2 /* Sources */,
 				1D00A97E2818EB4200CC96B2 /* Frameworks */,
 				1D00A97F2818EB4200CC96B2 /* Resources */,
-				08B6DEF63CF5F7705A51D007 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -164,23 +163,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		08B6DEF63CF5F7705A51D007 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ScanMeExam/Pods-ScanMeExam-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ScanMeExam/Pods-ScanMeExam-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ScanMeExam/Pods-ScanMeExam-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		1F5696633F70090772191DA6 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
