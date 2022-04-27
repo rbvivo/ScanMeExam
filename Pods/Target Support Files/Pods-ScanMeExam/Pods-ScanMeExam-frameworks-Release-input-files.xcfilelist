@@ -1,0 +1,5 @@
+${PODS_ROOT}/Target Support Files/Pods-ScanMeExam/Pods-ScanMeExam-frameworks.sh
+${BUILT_PRODUCTS_DIR}/DocumentsOCR/DocumentsOCR.framework
+${BUILT_PRODUCTS_DIR}/GPUImage/GPUImage.framework
+${BUILT_PRODUCTS_DIR}/PodAsset/PodAsset.framework
+${BUILT_PRODUCTS_DIR}/TesseractOCRiOS/TesseractOCR.framework
