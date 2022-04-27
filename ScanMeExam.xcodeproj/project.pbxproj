@@ -13,6 +13,7 @@
 		1D00A98C2818EB4200CC96B2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1D00A98A2818EB4200CC96B2 /* Main.storyboard */; };
 		1D00A98E2818EB5200CC96B2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1D00A98D2818EB5200CC96B2 /* Assets.xcassets */; };
 		1D00A9912818EB5200CC96B2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1D00A98F2818EB5200CC96B2 /* LaunchScreen.storyboard */; };
+		1D23BD88281943D40000A26C /* tessdata in Resources */ = {isa = PBXBuildFile; fileRef = 1D23BD87281943D40000A26C /* tessdata */; };
 		E9FB74DC1A0752EAA5D7777B /* Pods_ScanMeExam.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8BB1846E3697AC693454FF99 /* Pods_ScanMeExam.framework */; };
 /* End PBXBuildFile section */
 
@@ -25,6 +26,7 @@
 		1D00A98D2818EB5200CC96B2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1D00A9902818EB5200CC96B2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		1D00A9922818EB5200CC96B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1D23BD87281943D40000A26C /* tessdata */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tessdata; sourceTree = SOURCE_ROOT; };
 		8BB1846E3697AC693454FF99 /* Pods_ScanMeExam.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ScanMeExam.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A32BF390183B57FE9CEC6F00 /* Pods-ScanMeExam.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ScanMeExam.debug.xcconfig"; path = "Target Support Files/Pods-ScanMeExam/Pods-ScanMeExam.debug.xcconfig"; sourceTree = "<group>"; };
 		C486D65AFEADDC082E613E3A /* Pods-ScanMeExam.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ScanMeExam.release.xcconfig"; path = "Target Support Files/Pods-ScanMeExam/Pods-ScanMeExam.release.xcconfig"; sourceTree = "<group>"; };
@@ -70,6 +72,7 @@
 				1D00A98D2818EB5200CC96B2 /* Assets.xcassets */,
 				1D00A98F2818EB5200CC96B2 /* LaunchScreen.storyboard */,
 				1D00A9922818EB5200CC96B2 /* Info.plist */,
+				1D23BD87281943D40000A26C /* tessdata */,
 			);
 			path = ScanMeExam;
 			sourceTree = "<group>";
@@ -152,6 +155,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1D00A9912818EB5200CC96B2 /* LaunchScreen.storyboard in Resources */,
+				1D23BD88281943D40000A26C /* tessdata in Resources */,
 				1D00A98E2818EB5200CC96B2 /* Assets.xcassets in Resources */,
 				1D00A98C2818EB4200CC96B2 /* Main.storyboard in Resources */,
 			);
@@ -358,6 +362,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ScanMeExam/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "App will use the camera to take pictures of your text";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "App will use photolibrary to access images for your text";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -387,6 +393,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ScanMeExam/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "App will use the camera to take pictures of your text";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "App will use photolibrary to access images for your text";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
