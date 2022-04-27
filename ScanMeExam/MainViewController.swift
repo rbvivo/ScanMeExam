@@ -7,13 +7,18 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class MainViewController: UIViewController {
+    
+    @IBOutlet weak var scannedTextContainerLabel: UILabel!
+    @IBOutlet weak var resultsContainerLabel: UILabel!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
     }
 
-
+    @IBAction func addInput() {
+        
+    }
 }
 
