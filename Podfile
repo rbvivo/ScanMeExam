@@ -6,7 +6,6 @@ target 'ScanMeExam' do
   use_frameworks!
 
   # Pods for ScanMeExam
-  pod 'TesseractOCRiOS', :git => 'https://github.com/appintheair/Tesseract-OCR-iOS'
-  pod "DocumentsOCR"
-
+  pod 'TesseractOCRiOS'
+  
 end

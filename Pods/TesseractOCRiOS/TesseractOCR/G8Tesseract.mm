@@ -13,6 +13,7 @@
 #import "G8TesseractParameters.h"
 #import "G8Constants.h"
 #import "G8RecognizedBlock.h"
+#import "G8HierarchicalRecognizedBlock.h"
 
 #import "baseapi.h"
 #import "environ.h"
@@ -82,77 +83,88 @@ namespace tesseract {
     tesseract::TessBaseAPI::ClearPersistentCache();
 }
 
+  
 - (instancetype)init {
     
-    return [self initWithLanguage:nil];
+    self = [super init];
+    if (self != nil) {
+        
+        _pageSegmentationMode = G8PageSegmentationModeSingleBlock;
+        _variables = [NSMutableDictionary dictionary];
+        _sourceResolution = kG8DefaultResolution;
+        _rect = CGRectZero;
+        
+        _monitor = new ETEXT_DESC();
+        _monitor->cancel = tesseractCancelCallbackFunction;
+        _monitor->cancel_this = (__bridge void*)self;
+        
+        _absoluteDataPath = [NSBundle mainBundle].bundlePath;
+        
+        setenv("TESSDATA_PREFIX", [_absoluteDataPath stringByAppendingString:@"/"].fileSystemRepresentation, 1);
+        
+    }
+    return self;
 }
 
 - (instancetype)initWithLanguage:(NSString*)language
 {
-    return [self initWithLanguage:language configDictionary:nil configFileNames:nil cachesRelatedDataPath:nil engineMode:G8OCREngineModeTesseractOnly];
+    self = [self init];
+    self.language = language.copy;
+    return self;
 }
 
-- (instancetype)initWithLanguage:(NSString *)language engineMode:(G8OCREngineMode)engineMode
-{
-    return [self initWithLanguage:language configDictionary:nil configFileNames:nil cachesRelatedDataPath:nil engineMode:engineMode];
+- (instancetype)initWithLanguage:(NSString *)language engineMode:(G8OCREngineMode)engineMode {
+    self = [self initWithLanguage:language];
+    _engineMode = engineMode;
+    return self;
 }
 
 - (instancetype)initWithLanguage:(NSString *)language
                 configDictionary:(NSDictionary *)configDictionary
                  configFileNames:(NSArray *)configFileNames
            cachesRelatedDataPath:(NSString *)cachesRelatedPath
-                      engineMode:(G8OCREngineMode)engineMode
-{
-    NSString *absoluteDataPath = nil;
-    if (cachesRelatedPath) {
-        // config Tesseract to search trainedData in tessdata folder of the Caches folder
-        NSArray *cachesPaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-        NSString *cachesPath = cachesPaths.firstObject;
+                      engineMode:(G8OCREngineMode)engineMode {
+    
+    // config Tesseract to search trainedData in tessdata folder of the Caches folder
+    NSArray *cachesPaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+    NSString *cachesPath = cachesPaths.firstObject;
+    
+    NSString *absoluteDataPath = [cachesPath stringByAppendingPathComponent:cachesRelatedPath].copy;
 
-        absoluteDataPath = [cachesPath stringByAppendingPathComponent:cachesRelatedPath].copy;
+    
+    self = [self initWithLanguage:language engineMode:engineMode];
+    
+    if (configFileNames) {
+        NSAssert([configFileNames isKindOfClass:[NSArray class]], @"Error! configFileNames should be of type NSArray");
     }
-    return [self initWithLanguage:language
-                 configDictionary:configDictionary
-                  configFileNames:configFileNames
-                 absoluteDataPath:absoluteDataPath
-                       engineMode:engineMode];
+    
+    _absoluteDataPath = absoluteDataPath.copy;
+    _configDictionary = configDictionary;
+    _configFileNames = configFileNames;
+    
+    return self;
 }
 
 - (instancetype)initWithLanguage:(NSString *)language
                 configDictionary:(NSDictionary *)configDictionary
                  configFileNames:(NSArray *)configFileNames
                 absoluteDataPath:(NSString *)absoluteDataPath
-                      engineMode:(G8OCREngineMode)engineMode
-{
-    self = [super init];
+                      engineMode:(G8OCREngineMode)engineMode {
+    
+    self = [self initWithLanguage:language engineMode:engineMode];
+
+    
     if (self != nil) {
-        if (configFileNames) {
-            NSAssert([configFileNames isKindOfClass:[NSArray class]], @"Error! configFileNames should be of type NSArray");
-        }
+
         if (absoluteDataPath != nil) {
             [self moveTessdataToDirectoryIfNecessary:absoluteDataPath];
         }
         _absoluteDataPath = absoluteDataPath.copy;
         _configDictionary = configDictionary;
         _configFileNames = configFileNames;
-        _engineMode = engineMode;
-        _pageSegmentationMode = G8PageSegmentationModeSingleBlock;
-        _variables = [NSMutableDictionary dictionary];
-        _sourceResolution = kG8DefaultResolution;
-        _rect = CGRectZero;
-
-        _monitor = new ETEXT_DESC();
-        _monitor->cancel = tesseractCancelCallbackFunction;
-        _monitor->cancel_this = (__bridge void*)self;
-
-        if (self.absoluteDataPath == nil) {
-            // config Tesseract to search trainedData in tessdata folder of the application bundle];
-            _absoluteDataPath = [NSBundle mainBundle].bundlePath;
-        }
         
         setenv("TESSDATA_PREFIX", [_absoluteDataPath stringByAppendingString:@"/"].fileSystemRepresentation, 1);
 
-        self.language = language.copy;
     }
     return self;
 }
@@ -341,7 +353,7 @@ namespace tesseract {
 {
     if (self.isEngineConfigured) {
         [self.variables enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
-            _tesseract->SetVariable(key.UTF8String, value.UTF8String);
+            self->_tesseract->SetVariable(key.UTF8String, value.UTF8String);
         }];
     }
 }
@@ -662,6 +674,57 @@ namespace tesseract {
     return block;
 }
 
+
+
+- (G8HierarchicalRecognizedBlock *)hierarchicalBlockFromIterator:(tesseract::ResultIterator *)iterator
+									   iteratorLevel:(G8PageIteratorLevel)iteratorLevel {
+
+	G8HierarchicalRecognizedBlock* block = [[G8HierarchicalRecognizedBlock alloc] initWithBlock:[self blockFromIterator:iterator iteratorLevel:iteratorLevel]];
+
+	if (iteratorLevel == G8PageIteratorLevelWord) {
+		
+		bool isBold;
+		bool isItalic;
+		bool isUnderlined;
+		bool isMonospace;
+		bool isSerif;
+		bool isSmallcaps;
+		int pointsize;
+		int fontId;
+		
+		iterator->WordFontAttributes(&isBold, &isItalic, &isUnderlined, &isMonospace, &isSerif, &isSmallcaps, &pointsize, &fontId);
+		
+		block.isFromDict = iterator->WordIsFromDictionary();
+		block.isNumeric = iterator->WordIsNumeric();
+		block.isBold = isBold;
+		block.isItalic = isItalic;
+		
+	} else if (iteratorLevel == G8PageIteratorLevelSymbol) {
+	
+		// get character choices
+		NSMutableArray *choices = [NSMutableArray array];
+		
+		tesseract::ChoiceIterator choiceIterator(*iterator);
+		do {
+			const char *choiceWord = choiceIterator.GetUTF8Text();
+			if (choiceWord != NULL) {
+				NSString *text = [NSString stringWithUTF8String:choiceWord];
+				CGFloat confidence = choiceIterator.Confidence();
+				
+				G8RecognizedBlock *choiceBlock = [[G8RecognizedBlock alloc] initWithText:text
+																			 boundingBox:block.boundingBox
+																			  confidence:confidence
+																				   level:G8PageIteratorLevelSymbol];
+				[choices addObject:choiceBlock];
+			}
+		} while (choiceIterator.Next());
+		
+		block.characterChoices = [choices copy];
+	}
+
+	return block;
+}
+
 - (NSArray *)characterChoices
 {
     if (!self.isEngineConfigured) {
@@ -698,6 +761,72 @@ namespace tesseract {
     
     return [array copy];
 }
+
+
+
+- (NSArray *) recognizedHierarchicalBlocksByIteratorLevel:(G8PageIteratorLevel)pageIteratorLevel {
+	
+	if (!self.engineConfigured) {
+		return nil;
+	}
+	
+	tesseract::ResultIterator *resultIterator = _tesseract->GetIterator();
+	
+	NSArray* blocks = [self getBlocksFromIterator:resultIterator forLevel:pageIteratorLevel highestLevel:pageIteratorLevel];
+	
+	return blocks;
+}
+
+
+-(NSArray*) getBlocksFromIterator:(tesseract::ResultIterator*)resultIterator forLevel:(G8PageIteratorLevel)pageIteratorLevel highestLevel:(G8PageIteratorLevel)highestLevel {
+	
+	NSMutableArray* blocks = [[NSMutableArray alloc] init];
+	
+	tesseract::PageIteratorLevel level = (tesseract::PageIteratorLevel)pageIteratorLevel;
+	
+	BOOL endOfBlock = NO;
+	
+	do {
+		G8HierarchicalRecognizedBlock *block = [self hierarchicalBlockFromIterator:resultIterator iteratorLevel:pageIteratorLevel];
+		[blocks addObject:block];
+		
+		// if we are on a higher level than symbol call the getblocks function for the next deeper level
+		if(pageIteratorLevel != G8PageIteratorLevelSymbol) {
+			block.childBlocks = [self getBlocksFromIterator:resultIterator forLevel:[self getDeeperIteratorLevel:pageIteratorLevel] highestLevel:highestLevel];
+		}
+
+		// check if we are at the end of a block
+		endOfBlock = (pageIteratorLevel != highestLevel && resultIterator->IsAtFinalElement((tesseract::PageIteratorLevel)[self getHigherIteratorLevel:pageIteratorLevel], level)) || !resultIterator->Next(level);
+	
+		
+	} while (!endOfBlock);
+	
+	return blocks;
+}
+
+-(G8PageIteratorLevel)getDeeperIteratorLevel:(G8PageIteratorLevel)iteratorLevel {
+	
+	switch (iteratorLevel) {
+		case G8PageIteratorLevelBlock: return G8PageIteratorLevelParagraph;
+		case G8PageIteratorLevelParagraph: return G8PageIteratorLevelTextline;
+		case G8PageIteratorLevelTextline: return G8PageIteratorLevelWord;
+		case G8PageIteratorLevelWord: return G8PageIteratorLevelSymbol;
+		case G8PageIteratorLevelSymbol: return G8PageIteratorLevelSymbol;
+	}
+}
+
+
+-(G8PageIteratorLevel)getHigherIteratorLevel:(G8PageIteratorLevel)iteratorLevel {
+	
+	switch (iteratorLevel) {
+		case G8PageIteratorLevelBlock: return G8PageIteratorLevelBlock;
+		case G8PageIteratorLevelParagraph: return G8PageIteratorLevelBlock;
+		case G8PageIteratorLevelTextline: return G8PageIteratorLevelParagraph;
+		case G8PageIteratorLevelWord: return G8PageIteratorLevelTextline;
+		case G8PageIteratorLevelSymbol: return G8PageIteratorLevelWord;
+	}
+}
+
 
 - (NSArray *)recognizedBlocksByIteratorLevel:(G8PageIteratorLevel)pageIteratorLevel
 {

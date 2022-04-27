@@ -11,6 +11,7 @@
 #endif
 
 #import "G8Constants.h"
+#import "G8HierarchicalRecognizedBlock.h"
 #import "G8RecognitionOperation.h"
 #import "G8RecognizedBlock.h"
 #import "G8Tesseract.h"
