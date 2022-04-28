@@ -13,29 +13,43 @@ class MainViewController: UIViewController, UINavigationControllerDelegate {
     
     @IBOutlet weak var scannedTextContainerLabel: UILabel!
     @IBOutlet weak var resultsContainerLabel: UILabel!
-
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupTheme()
         // Do any additional setup after loading the view.
     }
 
+    private func setupTheme() {
+    #if RED_CAMERA || RED_LIBRARY
+        self.view.backgroundColor = .red
+    #elseif GREEN_CAMERA || GREEN_LIBRARY
+        self.view.backgroundColor = .green
+    #endif
+    }
     @IBAction func addInput() {
-       
+        self.activityIndicator.startAnimating()
         let imagePickerActionSheet = UIAlertController(title: "Snap/Upload Image", message: nil, preferredStyle: .actionSheet)
 
+        #if !RED_LIBRARY && !GREEN_LIBRARY
         if UIImagePickerController.isSourceTypeAvailable(.camera) {
           let cameraButton = UIAlertAction(title: "Take Photo", style: .default) { (alert) -> Void in
               self.openImagePicker(source: .camera)
           }
           imagePickerActionSheet.addAction(cameraButton)
         }
+        #endif
         
+        #if !RED_CAMERA && !GREEN_CAMERA
         let libraryButton = UIAlertAction(title: "Choose Existing", style: .default) { (alert) -> Void in
             self.openImagePicker(source: .photoLibrary)
         }
         imagePickerActionSheet.addAction(libraryButton)
+        #endif
         
-        let cancelButton = UIAlertAction(title: "Cancel", style: .cancel)
+        let cancelButton = UIAlertAction(title: "Cancel", style: .cancel) { (alert) -> Void in
+            self.activityIndicator.stopAnimating()
+        }
         imagePickerActionSheet.addAction(cancelButton)
 
         present(imagePickerActionSheet, animated: true)
@@ -70,6 +84,7 @@ class MainViewController: UIViewController, UINavigationControllerDelegate {
 
 extension MainViewController: UIImagePickerControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        self.activityIndicator.stopAnimating()
         guard let selectedPhoto =
           info[.originalImage] as? UIImage else {
             dismiss(animated: true)
@@ -79,6 +94,10 @@ extension MainViewController: UIImagePickerControllerDelegate {
         dismiss(animated: true) {
           self.performImageRecognition(selectedPhoto)
         }
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        self.activityIndicator.stopAnimating()
     }
 }
 

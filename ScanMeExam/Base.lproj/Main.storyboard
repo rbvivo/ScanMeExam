@@ -12,7 +12,6 @@
         <!--Navigation Controller-->
         <scene sceneID="DYn-XF-peo">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="lsv-N0-zBw" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <navigationController id="inV-Z5-VnC" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="0Mi-Xz-OcS">
                         <rect key="frame" x="0.0" y="44" width="414" height="44"/>
@@ -22,6 +21,7 @@
                         <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="GfH-nz-V2J"/>
                     </connections>
                 </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="lsv-N0-zBw" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-810" y="94"/>
         </scene>
@@ -55,22 +55,28 @@
                                     <action selector="addInput" destination="BYZ-38-t0r" eventType="touchUpInside" id="3od-zB-Yjg"/>
                                 </connections>
                             </button>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="7ge-gP-i32">
+                                <rect key="frame" x="188.5" y="429.5" width="37" height="37"/>
+                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="7ge-gP-i32" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="1OT-qV-9G4"/>
                             <constraint firstItem="XWo-Vi-Als" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="42" id="Cd3-Hq-dpa"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="XoJ-GH-a2i" secondAttribute="trailing" constant="12" id="HJ3-eg-gcl"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="XWo-Vi-Als" secondAttribute="trailing" constant="12" id="T1H-iS-14m"/>
                             <constraint firstItem="Yu6-8i-ItO" firstAttribute="top" secondItem="XoJ-GH-a2i" secondAttribute="bottom" constant="8" symbolic="YES" id="Uj2-mc-Kk7"/>
                             <constraint firstItem="Yu6-8i-ItO" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="W1S-pw-4ht"/>
                             <constraint firstItem="XWo-Vi-Als" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="qk2-8N-YCG"/>
+                            <constraint firstItem="7ge-gP-i32" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="rf1-bV-TKz"/>
                             <constraint firstItem="XoJ-GH-a2i" firstAttribute="top" secondItem="XWo-Vi-Als" secondAttribute="bottom" constant="8" symbolic="YES" id="tQv-cE-IbU"/>
                             <constraint firstItem="XoJ-GH-a2i" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="yEH-H6-RCE"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="Jxe-qK-Q5A"/>
                     <connections>
+                        <outlet property="activityIndicator" destination="7ge-gP-i32" id="EbD-2g-JLe"/>
                         <outlet property="resultsContainerLabel" destination="XoJ-GH-a2i" id="EsS-Ih-Q5h"/>
                         <outlet property="scannedTextContainerLabel" destination="XWo-Vi-Als" id="I3e-sG-QHV"/>
                     </connections>
